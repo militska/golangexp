@@ -27,8 +27,8 @@ func (req *ValidateError) Error() string {
 
 func test(name string) (bool, error) {
 
-	//  вот так делать не нужно
-	// судя должны попадать уже отвалидированные данные
+	// вот так делать не нужно
+	// сюда должны попадать уже отвалидированные данные
 	// но это для того что бы показать
 	if len(name) < 5 {
 		return false, &ValidateError{
