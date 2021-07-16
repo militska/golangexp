@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"net/http"
+	"strconv"
 )
 
 type RequestError struct {
@@ -21,7 +22,7 @@ type ValidateError struct {
 }
 
 func (req *ValidateError) Error() string {
-	return req.ErrorMessage
+	return fmt.Sprintf("%s: %s", req.Field, req.ErrorMessage)
 }
 
 func test(name string) (bool, error) {
@@ -49,11 +50,29 @@ func test(name string) (bool, error) {
 
 	}
 }
+
+func getHttpCodeFromError(err error) int {
+	var httpCode int
+	switch v := err.(type) {
+	case *RequestError:
+		errResponse := err.(*RequestError)
+		httpCode = errResponse.StatusCode
+	case *ValidateError:
+		httpCode = http.StatusNotFound
+	default:
+		fmt.Println("Unknown type error %T", v)
+		httpCode = http.StatusUnprocessableEntity
+	}
+
+	return httpCode
+}
+
 func main() {
 	res, err := test("4dddddd4")
 
 	if err != nil {
 		fmt.Println(err)
+		fmt.Println("Status code: " + strconv.Itoa(getHttpCodeFromError(err)))
 	}
 	fmt.Println(res)
 	fmt.Println("Hello, playground")
