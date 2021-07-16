@@ -65,7 +65,7 @@ func getHttpCodeFromError(err error) int {
 		errResponse := err.(*RequestError)
 		httpCode = errResponse.StatusCode
 	case *ValidateError:
-		httpCode = http.StatusNotFound
+		httpCode = http.StatusBadRequest
 	default:
 		fmt.Println("Unknown type error %T", v)
 		httpCode = http.StatusUnprocessableEntity
