@@ -26,6 +26,10 @@ func (req *ValidateError) Error() string {
 }
 
 func test(name string) (bool, error) {
+
+	//  вот так делать не нужно
+	// судя должны попадать уже отвалидированные данные
+	// но это для того что бы показать
 	if len(name) < 5 {
 		return false, &ValidateError{
 			"name",
@@ -37,16 +41,19 @@ func test(name string) (bool, error) {
 
 	if err != nil {
 		return false, &RequestError{
-			StatusCode:   http.StatusNotFound,
-			ErrorMessage: "Ошибка получения данных",
+			StatusCode:   http.StatusBadRequest,
+			ErrorMessage: "Ошибка запроса: " + err.Error(),
 		}
 	}
 
 	switch resp.StatusCode() {
-	case 200:
+	case http.StatusOK:
 		return true, nil
 	default:
-		return false, err
+		return false, &RequestError{
+			StatusCode:   resp.StatusCode(),
+			ErrorMessage: "Ошибка получения данных",
+		}
 
 	}
 }
