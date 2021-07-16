@@ -39,6 +39,7 @@ func main() {
 	task.AddError("Name", "Название должно быть длиннее")
 	task.AddError("Description", "Неверно заполнено описание")
 
+	fmt.Println(len(task.errors))
 	if task.existsErrors() {
 		fmt.Println(task.GetErrors())
 	}
