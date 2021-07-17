@@ -2,45 +2,57 @@ package main
 
 import "fmt"
 
-type BaseModel struct {
-	errors []Error
+type BaseModelV2 struct {
+	errors map[string][]Error
 }
 
 type Error struct {
-	Field   string
-	Message string
+	Field       string
+	Message     string
+	TechMessage string
 }
 
 type Task struct {
 	Name        string
 	Description string
-	BaseModel
+	BaseModelV2
 }
 
-func (receiver *BaseModel) AddError(field string, message string) {
-	receiver.errors = append(receiver.errors, Error{Field: field, Message: message})
+func (receiver *BaseModelV2) AddError(field string, message string) {
+	receiver.errors[field] = append(receiver.errors[field], Error{Field: field, Message: message})
 }
 
-func (receiver *BaseModel) GetErrors() []Error {
+func (receiver *BaseModelV2) GetAllErrors() map[string][]Error {
 	return receiver.errors
 }
 
-func (receiver *BaseModel) existsErrors() bool {
+func (receiver *BaseModelV2) GetErrors(field string) []Error {
+	return receiver.errors[field]
+}
+
+func (receiver *BaseModelV2) existsErrors() bool {
 	return len(receiver.errors) > 0
 }
 
 func main() {
+
+	errors := make(map[string][]Error)
+
 	task := Task{
 		Name:        "New task",
 		Description: "ddd",
-		BaseModel:   BaseModel{},
+		BaseModelV2: BaseModelV2{},
 	}
 
+	task.BaseModelV2.errors = errors
+
 	task.AddError("Name", "Название должно быть длиннее")
+	task.AddError("Name", "Название должно быть написано кирилецей")
 	task.AddError("Description", "Неверно заполнено описание")
 
 	fmt.Println(len(task.errors))
 	if task.existsErrors() {
-		fmt.Println(task.GetErrors())
+		fmt.Println(task.GetAllErrors())
+		fmt.Println(task.GetErrors("Name"))
 	}
 }
