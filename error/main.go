@@ -2,8 +2,12 @@ package main
 
 import "fmt"
 
-type BaseModelV2 struct {
+type ErrorModel struct {
 	errors map[string][]Error
+}
+
+type BaseModel struct {
+	ErrorModel
 }
 
 type Error struct {
@@ -15,39 +19,42 @@ type Error struct {
 type Task struct {
 	Name        string
 	Description string
-	BaseModelV2
+	BaseModel
 }
 
-func (receiver *BaseModelV2) AddError(field string, message string) {
+func (receiver *ErrorModel) AddError(field string, message string) {
 	receiver.errors[field] = append(receiver.errors[field], Error{Field: field, Message: message})
 }
 
-func (receiver *BaseModelV2) GetAllErrors() map[string][]Error {
+func (receiver *ErrorModel) GetAllErrors() map[string][]Error {
 	return receiver.errors
 }
 
-func (receiver *BaseModelV2) GetErrors(field string) []Error {
+func (receiver *ErrorModel) GetErrors(field string) []Error {
 	return receiver.errors[field]
 }
 
-func (receiver *BaseModelV2) existsErrors() bool {
+func (receiver *ErrorModel) existsErrors() bool {
 	return len(receiver.errors) > 0
 }
 
+func New() BaseModel {
+	base := BaseModel{
+		ErrorModel: ErrorModel{},
+	}
+	base.errors = make(map[string][]Error)
+	return base
+}
 func main() {
 
-	errors := make(map[string][]Error)
-
 	task := Task{
-		Name:        "New task",
-		Description: "ddd",
-		BaseModelV2: BaseModelV2{},
+		Name:        "tt",
+		Description: "descrr",
+		BaseModel:   New(),
 	}
 
-	task.BaseModelV2.errors = errors
-
 	task.AddError("Name", "Название должно быть длиннее")
-	task.AddError("Name", "Название должно быть написано кирилецей")
+	task.AddError("Name", "Название должно быть написано кирилец")
 	task.AddError("Description", "Неверно заполнено описание")
 
 	fmt.Println(len(task.errors))
