@@ -12,7 +12,7 @@ func main() {
 	name = "test"
 	fmt.Println(name)
 
-	list := []interface{}{"r"}
+	list := []interface{}{true}
 
 	list = append(list, name)
 	list = append(list, num)
