@@ -1,24 +1,32 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
 
-func main() {
-	//str := "ЯЯЕЕЕ"
-	str := "aaaЫЫЫbbbcccccaaaaaccЯЯ"
+func Counter(str string) string {
 	var inc int
-	var key string
 	res := make(map[string]int)
 	runStr := []rune(str)
 	for inc = 0; inc < len([]rune(str)); inc++ {
-		key = string(runStr[inc])
-		if _, ok := res[key]; ok {
-			res[key]++
-			continue
-		}
-		res[key] = 1
+		res[string(runStr[inc])]++
 	}
+	SortKey := make([]string, 0, len(res))
+	for k := range res {
+		SortKey = append(SortKey, k)
+	}
+	sort.Strings(SortKey)
+	var itog string
+	for _, k := range SortKey {
+		itog += fmt.Sprintf("%s%d", k, res[k])
+	}
+	return itog
+}
 
-	for v, k := range res {
-		fmt.Print(fmt.Sprintf("%s%d", v, k))
-	}
+func main() {
+	//str := "ЯЯЕЕЕ"
+	str := "ЯЯaaaЫЫЫbbbcccccaaaaaccЯЯ"
+
+	fmt.Println(Counter(str))
 }
